@@ -1,5 +1,5 @@
-CC			= g++
-CFLAGS 		= -std=c++17 -O2 -Wall
+CC			= gcc
+CFLAGS 		= -std=c17 -O2 -Wall
 LDFLAGS 	= -lglfw -lvulkan -ldl -lpthread -lX11 -lXxf86vm -lXrandr -lXi
 OBJFILES 	= triangle.o main.o
 TARGET 		= triangletest

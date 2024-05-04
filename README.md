@@ -8,17 +8,22 @@ My operating system is Arch Linux and XMonad tiling window manager.
 ## Basic Makefile
 
 ``` makefile
-CFLAGS = -std=c++17 -O2
-LDFLAGS = -lglfw -lvulkan -ldl -lpthread -lX11 -lXxf86vm -lXrandr -lXi
+CC			= gcc
+CFLAGS 		= -std=c17 -O2 -Wall
+LDFLAGS 	= -lglfw -lvulkan -ldl -lpthread -lX11 -lXxf86vm -lXrandr -lXi
+OBJFILES 	= triangle.o main.o
+TARGET 		= triangletest
 
-VulkanTest: main.cpp
-    g++ $(CFLAGS) -o VulkanTest main.cpp $(LDFLAGS)
+all: $(TARGET)
+
+$(TARGET): $(OBJFILES)
+	$(CC) $(CFLAGS) -o $(TARGET) $(OBJFILES) $(LDFLAGS)
 
 .PHONY: test clean
 
-test: VulkanTest
-    ./VulkanTest
+test:
+	./$(TARGET)
 
 clean:
-    rm -f VulkanTest
+	rm -f $(TARGET) $(OBJFILES)
 ```

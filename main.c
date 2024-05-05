@@ -1,6 +1,4 @@
-#include <stdlib.h>
-
-#include "triangle.h"
+#include "Triangle/triangle.h"
 
 
 int main() {

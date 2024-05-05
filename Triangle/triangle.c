@@ -1,7 +1,9 @@
 #include "triangle.h"
+#include "../Validation/validation.h"
 
 #include <stdlib.h>
-#include <GLFW/glfw3.h>
+#include <stdio.h>
+
 
 const uint32_t WIDTH = 800;
 const uint32_t HEIGHT = 600;
@@ -26,6 +28,12 @@ void initWindow() {
 }
 
 void createInstance() {
+    // Check if Validation layers exist
+    if (enableValidationLayers && !checkValidationLayerSupport()) {
+        printf("[Error] Validation layers requested, but not available!");
+        exit(-1);
+    }
+
     // Information about applications (OPTIONAL)
     VkApplicationInfo appInfo;
     appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
@@ -50,10 +58,16 @@ void createInstance() {
     createInfo.ppEnabledExtensionNames = glfwExtensions;
 
     // Information about validation layer
-    createInfo.enabledLayerCount = 0;
+    if (enableValidationLayers) {
+        createInfo.enabledLayerCount = (uint32_t)sizeof(*validationLayers)/sizeof(char *);
+        createInfo.ppEnabledLayerNames = validationLayers;
+    } else {
+        createInfo.enabledLayerCount = 0;
+    }
 
     // Check if instance was created successfully
     if (vkCreateInstance(&createInfo, NULL, &instance) != VK_SUCCESS) {
+        printf("[Error] failed to create instance!");
         exit(-1);
     }
 }

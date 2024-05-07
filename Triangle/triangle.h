@@ -9,11 +9,13 @@ extern const uint32_t HEIGHT;
 
 extern GLFWwindow* window;
 extern VkInstance instance;
+extern VkDebugUtilsMessengerEXT debugMessenger;
 
 void run();
 void initWindow();
 void createInstance();
 void initVulkan();
+void setupDebugMessenger();
 void mainLoop();
 void cleanup();
 

@@ -3,6 +3,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 
 const uint32_t WIDTH = 800;
@@ -10,6 +11,8 @@ const uint32_t HEIGHT = 600;
 
 GLFWwindow* window;
 VkInstance instance;
+VkDebugUtilsMessengerEXT debugMessenger;
+
 
 void run() {
     initWindow();
@@ -30,7 +33,7 @@ void initWindow() {
 void createInstance() {
     // Check if Validation layers exist
     if (enableValidationLayers && !checkValidationLayerSupport()) {
-        printf("[Error] Validation layers requested, but not available!");
+        fprintf(stderr, "Validation layers requested, but not available!\n");
         exit(-1);
     }
 
@@ -49,31 +52,50 @@ void createInstance() {
     createInfo.pApplicationInfo = &appInfo;
 
     // Information about GLFW
-    uint32_t glfwExtensionCount = 0;
-    const char** glfwExtensions;
+    uint32_t extensionCount = 0;
+    const char** extensions = getRequiredExtensions(&extensionCount);
 
-    glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
+    createInfo.enabledExtensionCount = extensionCount;
+    createInfo.ppEnabledExtensionNames = extensions;
 
-    createInfo.enabledExtensionCount = glfwExtensionCount;
-    createInfo.ppEnabledExtensionNames = glfwExtensions;
+    VkDebugUtilsMessengerCreateInfoEXT debugCreateInfo;
 
     // Information about validation layer
     if (enableValidationLayers) {
-        createInfo.enabledLayerCount = (uint32_t)sizeof(*validationLayers)/sizeof(char *);
+        createInfo.enabledLayerCount = vlSize;
         createInfo.ppEnabledLayerNames = validationLayers;
+
+        populateDebugMessengerCreateInfo(&debugCreateInfo);
+        createInfo.pNext = (VkDebugUtilsMessengerCreateInfoEXT*) &debugCreateInfo;
     } else {
         createInfo.enabledLayerCount = 0;
+        createInfo.pNext = NULL;
     }
 
     // Check if instance was created successfully
     if (vkCreateInstance(&createInfo, NULL, &instance) != VK_SUCCESS) {
-        printf("[Error] failed to create instance!");
+        fprintf(stderr, "Failed to create instance!\n");
         exit(-1);
     }
 }
 
 void initVulkan() {
     createInstance();
+    setupDebugMessenger();
+}
+
+void setupDebugMessenger() {
+    if (!enableValidationLayers) {
+        return;
+    }
+
+    VkDebugUtilsMessengerCreateInfoEXT createInfo;
+    populateDebugMessengerCreateInfo(&createInfo);
+
+    if (CreateDebugUtilsMessengerEXT(instance, &createInfo, NULL, &debugMessenger) != VK_SUCCESS) {
+        fprintf(stderr, "Failed to set up debug messenger!\n");
+        exit(1);
+    }
 }
 
 void mainLoop() {
@@ -83,6 +105,10 @@ void mainLoop() {
 }
 
 void cleanup() {
+    if (enableValidationLayers) {
+        DestroyDebugUtilsMessengerEXT(instance, debugMessenger, NULL);
+    }
+
     vkDestroyInstance(instance, NULL);
 
     glfwDestroyWindow(window);

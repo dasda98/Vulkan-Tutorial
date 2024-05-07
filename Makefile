@@ -1,7 +1,7 @@
 CC			= gcc
 CFLAGS 		= -std=c17 -O2 -Wall
 LDFLAGS 	= -lglfw -lvulkan -ldl -lpthread -lX11 -lXxf86vm -lXrandr -lXi
-OBJFILES 	= triangle.o ../main.o
+OBJFILES 	= ./Triangle/triangle.o ./Validation/validation.o ./helpers/helpers.o main.o
 TARGET 		= triangletest
 
 all: $(TARGET)

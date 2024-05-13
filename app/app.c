@@ -1,15 +1,19 @@
-#include "triangle.h"
-#include "../Validation/validation.h"
+#include "app.h"
+
+#include "../window/window.h"
+
+#include "../validationlayer/validation.h"
+
+#include "../device/physical.h"
+#include "../device/logical.h"
+#include "../device/device.h"
 
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 
 
-const uint32_t WIDTH = 800;
-const uint32_t HEIGHT = 600;
 
-GLFWwindow* window;
 VkInstance instance;
 VkDebugUtilsMessengerEXT debugMessenger;
 
@@ -19,15 +23,6 @@ void run() {
     initVulkan();
     mainLoop();
     cleanup();
-}
-
-void initWindow() {
-    glfwInit(); // Initialize GLFW library
-
-    glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API); // Tell GLFW to not create an OpenGL context (we use Vulkan)
-    glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE); // Disable resized windows
-
-    window = glfwCreateWindow(WIDTH, HEIGHT, "Vulkan", NULL, NULL); // Create window
 }
 
 void createInstance() {
@@ -58,6 +53,8 @@ void createInstance() {
     createInfo.enabledExtensionCount = extensionCount;
     createInfo.ppEnabledExtensionNames = extensions;
 
+    createInfo.flags = 0;
+
     VkDebugUtilsMessengerCreateInfoEXT debugCreateInfo;
 
     // Information about validation layer
@@ -77,11 +74,16 @@ void createInstance() {
         fprintf(stderr, "Failed to create instance!\n");
         exit(-1);
     }
+
+    // Free alocated memory
+    free(extensions);
 }
 
 void initVulkan() {
     createInstance();
     setupDebugMessenger();
+    pickPhysicalDevice(instance);
+    createLogicalDevice();
 }
 
 void setupDebugMessenger() {
@@ -110,6 +112,7 @@ void cleanup() {
     }
 
     vkDestroyInstance(instance, NULL);
+    vkDestroyDevice(device, NULL);
 
     glfwDestroyWindow(window);
 

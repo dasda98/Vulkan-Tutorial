@@ -26,10 +26,9 @@ bool checkValidationLayerSupport() {
     VkLayerProperties availableLayers[layerCount];
     vkEnumerateInstanceLayerProperties(&layerCount, availableLayers);
 
-    size_t validationLayersSize = sizeof(validationLayers)/sizeof(char *);
     size_t availableLayersSize = sizeof(availableLayers)/sizeof(availableLayers[0]);
 
-    for (int i=0; i<validationLayersSize; i++) {
+    for (int i=0; i<vlSize; i++) {
         const char* layerName = validationLayers[i];
         bool layerFound = false;
 

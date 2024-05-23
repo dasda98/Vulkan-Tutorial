@@ -1,4 +1,2 @@
-app/triangletest
-*.o
-
 .idea
+cmake-build-debug

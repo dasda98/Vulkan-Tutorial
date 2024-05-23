@@ -1,11 +1,8 @@
 CC			= gcc
 CFLAGS 		= -std=c17 -O2 -Wall
 LDFLAGS 	= -lglfw -lvulkan -ldl -lpthread -lX11 -lXxf86vm -lXrandr -lXi
-OBJFILES 	= ./window/window.o \
-			  ./validationlayer/validation.o \
-			  ./device/physical.o \
-			  ./helpers/helpers.o \
-			  ./app/app.o \
+OBJFILES 	= ./app/triangle.o \
+			  ./validationlayer/validationlayer.o \
 			  main.o
 TARGET 		= apptest
 
